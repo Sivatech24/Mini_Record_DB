@@ -427,6 +427,12 @@ CMakeFiles/Win_App.dir/mainwindow.cpp.obj: \
  C:/Qt/6.11.1/mingw_64/include/QtWidgets/QPushButton \
  C:/Qt/6.11.1/mingw_64/include/QtWidgets/qpushbutton.h \
  C:/Qt/6.11.1/mingw_64/include/QtWidgets/qabstractbutton.h \
+ C:/Qt/6.11.1/mingw_64/include/QtWidgets/QLabel \
+ C:/Qt/6.11.1/mingw_64/include/QtWidgets/qlabel.h \
+ C:/Qt/6.11.1/mingw_64/include/QtGui/qpicture.h \
+ C:/Qt/6.11.1/mingw_64/include/QtCore/qiodevice.h \
+ C:/Qt/6.11.1/mingw_64/include/QtGui/qtextdocument.h \
+ C:/Qt/6.11.1/mingw_64/include/QtCore/qurl.h \
  C:/Qt/6.11.1/mingw_64/include/QtWidgets/QHBoxLayout \
  C:/Qt/6.11.1/mingw_64/include/QtWidgets/qboxlayout.h \
  C:/Qt/6.11.1/mingw_64/include/QtWidgets/qlayout.h \
@@ -436,12 +442,6 @@ CMakeFiles/Win_App.dir/mainwindow.cpp.obj: \
  C:/Qt/6.11.1/mingw_64/include/QtWidgets/QFormLayout \
  C:/Qt/6.11.1/mingw_64/include/QtWidgets/qformlayout.h \
  C:/Qt/6.11.1/mingw_64/include/QtWidgets/QLayout \
- C:/Qt/6.11.1/mingw_64/include/QtWidgets/QLabel \
- C:/Qt/6.11.1/mingw_64/include/QtWidgets/qlabel.h \
- C:/Qt/6.11.1/mingw_64/include/QtGui/qpicture.h \
- C:/Qt/6.11.1/mingw_64/include/QtCore/qiodevice.h \
- C:/Qt/6.11.1/mingw_64/include/QtGui/qtextdocument.h \
- C:/Qt/6.11.1/mingw_64/include/QtCore/qurl.h \
  C:/Qt/6.11.1/mingw_64/include/QtWidgets/QHeaderView \
  C:/Qt/6.11.1/mingw_64/include/QtWidgets/qheaderview.h \
  C:/Qt/6.11.1/mingw_64/include/QtWidgets/QMessageBox \
@@ -511,4 +511,5 @@ CMakeFiles/Win_App.dir/mainwindow.cpp.obj: \
  C:/Qt/6.11.1/mingw_64/include/QtCore/qjsonobject.h \
  C:/Qt/6.11.1/mingw_64/include/QtCore/QFile \
  C:/Qt/6.11.1/mingw_64/include/QtCore/QTextStream \
- C:/Qt/6.11.1/mingw_64/include/QtCore/QDateTime
+ C:/Qt/6.11.1/mingw_64/include/QtCore/QDateTime \
+ C:/Qt/6.11.1/mingw_64/include/QtCore/QDebug

@@ -55,6 +55,7 @@ C:/Users/tech/Documents/Qt/Win_App/mainwindow.h
  mdp:C:/Qt/6.11.1/mingw_64/include/QtCore/qglobalstatic.h
  mdp:C:/Qt/6.11.1/mingw_64/include/QtCore/qhash.h
  mdp:C:/Qt/6.11.1/mingw_64/include/QtCore/qhashfunctions.h
+ mdp:C:/Qt/6.11.1/mingw_64/include/QtCore/qiodevice.h
  mdp:C:/Qt/6.11.1/mingw_64/include/QtCore/qiodevicebase.h
  mdp:C:/Qt/6.11.1/mingw_64/include/QtCore/qitemselectionmodel.h
  mdp:C:/Qt/6.11.1/mingw_64/include/QtCore/qiterable.h
@@ -131,6 +132,7 @@ C:/Users/tech/Documents/Qt/Win_App/mainwindow.h
  mdp:C:/Qt/6.11.1/mingw_64/include/QtCore/qtversionchecks.h
  mdp:C:/Qt/6.11.1/mingw_64/include/QtCore/qtypeinfo.h
  mdp:C:/Qt/6.11.1/mingw_64/include/QtCore/qtypes.h
+ mdp:C:/Qt/6.11.1/mingw_64/include/QtCore/qurl.h
  mdp:C:/Qt/6.11.1/mingw_64/include/QtCore/qutf8stringview.h
  mdp:C:/Qt/6.11.1/mingw_64/include/QtCore/qvariant.h
  mdp:C:/Qt/6.11.1/mingw_64/include/QtCore/qvarlengtharray.h
@@ -151,12 +153,14 @@ C:/Users/tech/Documents/Qt/Win_App/mainwindow.h
  mdp:C:/Qt/6.11.1/mingw_64/include/QtGui/qkeysequence.h
  mdp:C:/Qt/6.11.1/mingw_64/include/QtGui/qpaintdevice.h
  mdp:C:/Qt/6.11.1/mingw_64/include/QtGui/qpalette.h
+ mdp:C:/Qt/6.11.1/mingw_64/include/QtGui/qpicture.h
  mdp:C:/Qt/6.11.1/mingw_64/include/QtGui/qpixelformat.h
  mdp:C:/Qt/6.11.1/mingw_64/include/QtGui/qpixmap.h
  mdp:C:/Qt/6.11.1/mingw_64/include/QtGui/qpolygon.h
  mdp:C:/Qt/6.11.1/mingw_64/include/QtGui/qregion.h
  mdp:C:/Qt/6.11.1/mingw_64/include/QtGui/qrgb.h
  mdp:C:/Qt/6.11.1/mingw_64/include/QtGui/qrgba64.h
+ mdp:C:/Qt/6.11.1/mingw_64/include/QtGui/qtextdocument.h
  mdp:C:/Qt/6.11.1/mingw_64/include/QtGui/qtgui-config.h
  mdp:C:/Qt/6.11.1/mingw_64/include/QtGui/qtguiexports.h
  mdp:C:/Qt/6.11.1/mingw_64/include/QtGui/qtguiglobal.h
@@ -170,6 +174,7 @@ C:/Users/tech/Documents/Qt/Win_App/mainwindow.h
  mdp:C:/Qt/6.11.1/mingw_64/include/QtSql/qtsqlexports.h
  mdp:C:/Qt/6.11.1/mingw_64/include/QtSql/qtsqlglobal.h
  mdp:C:/Qt/6.11.1/mingw_64/include/QtWidgets/QDateEdit
+ mdp:C:/Qt/6.11.1/mingw_64/include/QtWidgets/QLabel
  mdp:C:/Qt/6.11.1/mingw_64/include/QtWidgets/QListWidget
  mdp:C:/Qt/6.11.1/mingw_64/include/QtWidgets/QMainWindow
  mdp:C:/Qt/6.11.1/mingw_64/include/QtWidgets/QPushButton
@@ -185,6 +190,7 @@ C:/Users/tech/Documents/Qt/Win_App/mainwindow.h
  mdp:C:/Qt/6.11.1/mingw_64/include/QtWidgets/qabstractspinbox.h
  mdp:C:/Qt/6.11.1/mingw_64/include/QtWidgets/qdatetimeedit.h
  mdp:C:/Qt/6.11.1/mingw_64/include/QtWidgets/qframe.h
+ mdp:C:/Qt/6.11.1/mingw_64/include/QtWidgets/qlabel.h
  mdp:C:/Qt/6.11.1/mingw_64/include/QtWidgets/qlistview.h
  mdp:C:/Qt/6.11.1/mingw_64/include/QtWidgets/qlistwidget.h
  mdp:C:/Qt/6.11.1/mingw_64/include/QtWidgets/qmainwindow.h

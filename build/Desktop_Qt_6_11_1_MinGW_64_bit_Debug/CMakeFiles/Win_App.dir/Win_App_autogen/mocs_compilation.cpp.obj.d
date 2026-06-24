@@ -428,6 +428,16 @@ CMakeFiles/Win_App.dir/Win_App_autogen/mocs_compilation.cpp.obj: \
  C:/Qt/6.11.1/mingw_64/include/QtWidgets/QPushButton \
  C:/Qt/6.11.1/mingw_64/include/QtWidgets/qpushbutton.h \
  C:/Qt/6.11.1/mingw_64/include/QtWidgets/qabstractbutton.h \
+ C:/Qt/6.11.1/mingw_64/include/QtWidgets/QLabel \
+ C:/Qt/6.11.1/mingw_64/include/QtWidgets/qlabel.h \
+ C:/Qt/6.11.1/mingw_64/include/QtGui/qpicture.h \
+ C:/Qt/6.11.1/mingw_64/include/QtCore/qiodevice.h \
+ C:/Qt/6.11.1/mingw_64/include/QtGui/qtextdocument.h \
+ C:/Qt/6.11.1/mingw_64/include/QtCore/qurl.h \
+ C:/Qt/6.11.1/mingw_64/include/QtGui/qtextcursor.h \
+ C:/Qt/6.11.1/mingw_64/include/QtGui/qtextformat.h \
+ C:/Qt/6.11.1/mingw_64/include/QtGui/qpen.h \
+ C:/Qt/6.11.1/mingw_64/include/QtGui/qtextoption.h \
  C:/Qt/6.11.1/mingw_64/include/QtCore/qtmochelpers.h \
  C:/Qt/6.11.1/mingw_64/include/QtCore/qtmocconstants.h \
  C:/Qt/6.11.1/mingw_64/include/QtCore/q20algorithm.h

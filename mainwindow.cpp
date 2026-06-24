@@ -2,7 +2,6 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QFormLayout>
-#include <QLabel>
 #include <QHeaderView>
 #include <QMessageBox>
 #include <QFileDialog>
@@ -15,9 +14,10 @@
 #include <QFile>
 #include <QTextStream>
 #include <QDateTime>
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
+    : QMainWindow(parent), m_currentEditId(-1) // Initialize state to "Add Mode"
 {
     initDatabase();
     createUI();
@@ -45,7 +45,6 @@ void MainWindow::initDatabase()
     }
 
     QSqlQuery query;
-    // Create schema tracking requested values exactly
     bool success = query.exec(
         "CREATE TABLE IF NOT EXISTS schedules ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -60,21 +59,19 @@ void MainWindow::initDatabase()
     if (!success) {
         QMessageBox::critical(this, "Table Creation Error", query.lastError().text());
     } else {
-        // Seed initial sample data rows if table is empty
         query.exec("SELECT COUNT(*) FROM schedules");
         if (query.next() && query.value(0).toInt() == 0) {
-            seedSampleData();
+            // seedSampleData();
         }
     }
 }
 
-void MainWindow::seedSampleData()
+/*void MainWindow::seedSampleData()
 {
     QSqlQuery query;
     query.prepare("INSERT INTO schedules (record_date, start_time, end_time, uploads_count, sched_start_date, sched_end_date) "
                   "VALUES (:rd, :st, :et, :uc, :ssd, :sed)");
 
-    // Seed Row 1
     query.bindValue(":rd", "06/04/2026");
     query.bindValue(":st", "11:10 AM");
     query.bindValue(":et", "11:20 AM");
@@ -83,7 +80,6 @@ void MainWindow::seedSampleData()
     query.bindValue(":sed", "01/03/2027");
     query.exec();
 
-    // Seed Row 2
     query.bindValue(":rd", "06/04/2026");
     query.bindValue(":st", "12:30 PM");
     query.bindValue(":et", "01:30 PM");
@@ -91,7 +87,7 @@ void MainWindow::seedSampleData()
     query.bindValue(":ssd", "01/04/2027");
     query.bindValue(":sed", "01/17/2027");
     query.exec();
-}
+} */
 
 void MainWindow::createUI()
 {
@@ -109,9 +105,9 @@ void MainWindow::createUI()
     m_sidebar->setViewMode(QListView::ListMode);
     m_sidebar->setFixedWidth(200);
 
-    new QListWidgetItem(QIcon(), "  📋 View Records", m_sidebar);
-    new QListWidgetItem(QIcon(), "  ➕ Add Record", m_sidebar);
-    new QListWidgetItem(QIcon(), "  ⚙️ Tools & Backup", m_sidebar);
+    new QListWidgetItem(QIcon(), "   View Records", m_sidebar);
+    new QListWidgetItem(QIcon(), "   Add Record", m_sidebar);
+    new QListWidgetItem(QIcon(), "   Tools & Backup", m_sidebar);
     m_sidebar->setCurrentRow(0);
 
     // --- STACKED CONTAINER PAGES ---
@@ -136,13 +132,23 @@ void MainWindow::createUI()
     m_tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
     viewLayout->addWidget(m_tableWidget);
 
+    // Contextual Action Buttons for View Page
+    QHBoxLayout *actionLayout = new QHBoxLayout();
+    QPushButton *btnEdit = new QPushButton(" Edit Selected Record", viewPage);
+    QPushButton *btnDelete = new QPushButton(" Delete Selected", viewPage);
+    btnDelete->setObjectName("btn-delete"); // for styling
+    actionLayout->addWidget(btnEdit);
+    actionLayout->addWidget(btnDelete);
+    actionLayout->addStretch();
+    viewLayout->addLayout(actionLayout);
+
     // PAGE 2: Data Input Collection Entry Form
     QWidget *addPage = new QWidget();
     QVBoxLayout *addLayout = new QVBoxLayout(addPage);
 
-    QLabel *formTitle = new QLabel("Register New Schedule Metrics Entry", addPage);
-    formTitle->setStyleSheet("font-size: 18px; font-weight: bold; color: #2c3e50; margin-bottom: 15px;");
-    addLayout->addWidget(formTitle);
+    m_formTitle = new QLabel("Register New Schedule Metrics Entry", addPage);
+    m_formTitle->setStyleSheet("font-size: 18px; font-weight: bold; color: #2c3e50; margin-bottom: 15px;");
+    addLayout->addWidget(m_formTitle);
 
     QWidget *formContainer = new QWidget(addPage);
     QFormLayout *formLayout = new QFormLayout(formContainer);
@@ -178,9 +184,9 @@ void MainWindow::createUI()
     formLayout->addRow("Deployment Target Start Window:", m_schedStartEdit);
     formLayout->addRow("Deployment Target Termination Window:", m_schedEndEdit);
 
-    QPushButton *submitButton = new QPushButton("Save Entry Record to DB", formContainer);
-    submitButton->setObjectName("btn-submit");
-    formLayout->addRow("", submitButton);
+    m_submitButton = new QPushButton("Save Entry Record to DB", formContainer);
+    m_submitButton->setObjectName("btn-submit");
+    formLayout->addRow("", m_submitButton);
 
     addLayout->addWidget(formContainer);
     addLayout->addStretch();
@@ -193,33 +199,29 @@ void MainWindow::createUI()
     toolsTitle->setStyleSheet("font-size: 18px; font-weight: bold; color: #2c3e50; margin-bottom: 20px;");
     toolsLayout->addWidget(toolsTitle);
 
-    // Export Structural Blocks
     QLabel *exportLbl = new QLabel("Data Export Configurations (Active Pipeline DB to External)", toolsPage);
     exportLbl->setStyleSheet("font-weight: bold; color: #34495e;");
     toolsLayout->addWidget(exportLbl);
 
     QHBoxLayout *exportBtnLayout = new QHBoxLayout();
-    QPushButton *btnExpCSV = new QPushButton("📤 Export Dataset to CSV File", toolsPage);
-    QPushButton *btnExpJSON = new QPushButton("📤 Export Dataset to JSON Schema", toolsPage);
-    QPushButton *btnExpDB = new QPushButton("📦 Native Database Backup Binary (.db)", toolsPage);
+    QPushButton *btnExpCSV = new QPushButton("Export Dataset to CSV File", toolsPage);
+    QPushButton *btnExpJSON = new QPushButton("Export Dataset to JSON Schema", toolsPage);
+    QPushButton *btnExpDB = new QPushButton("Native Database Backup Binary (.db)", toolsPage);
     exportBtnLayout->addWidget(btnExpCSV);
     exportBtnLayout->addWidget(btnExpJSON);
     exportBtnLayout->addWidget(btnExpDB);
     toolsLayout->addLayout(exportBtnLayout);
 
-    //toolsLayout->addSpaceritem(new QSpacerItem(20, 30, QSizePolicy::Minimum, QSizePolicy::Fixed));
-    // Change the lowercase 'i' to an uppercase 'I'
     toolsLayout->addSpacerItem(new QSpacerItem(20, 30, QSizePolicy::Minimum, QSizePolicy::Fixed));
 
-    // Import Structural Blocks
     QLabel *importLbl = new QLabel("Data Import Configurations (External Source to Pipeline Table)", toolsPage);
     importLbl->setStyleSheet("font-weight: bold; color: #34495e;");
     toolsLayout->addWidget(importLbl);
 
     QHBoxLayout *importBtnLayout = new QHBoxLayout();
-    QPushButton *btnImpCSV = new QPushButton("📥 Parse and Import CSV Data", toolsPage);
-    QPushButton *btnImpJSON = new QPushButton("📥 Parse and Import JSON Manifest", toolsPage);
-    QPushButton *btnImpDB = new QPushButton("📦 Restore Database Native File (.db)", toolsPage);
+    QPushButton *btnImpCSV = new QPushButton(" Parse and Import CSV Data", toolsPage);
+    QPushButton *btnImpJSON = new QPushButton(" Parse and Import JSON Manifest", toolsPage);
+    QPushButton *btnImpDB = new QPushButton(" Restore Database Native File (.db)", toolsPage);
     importBtnLayout->addWidget(btnImpCSV);
     importBtnLayout->addWidget(btnImpJSON);
     importBtnLayout->addWidget(btnImpDB);
@@ -227,19 +229,20 @@ void MainWindow::createUI()
 
     toolsLayout->addStretch();
 
-    // Assemble Indexed Pages to Engine Stack Container
     m_pageContainer->addWidget(viewPage);
     m_pageContainer->addWidget(addPage);
     m_pageContainer->addWidget(toolsPage);
 
-    // Bind Base Containers to Global Interface Core Shell
     mainLayout->addWidget(m_sidebar);
     mainLayout->addWidget(m_pageContainer);
     setCentralWidget(centralWidget);
 
     // --- SIGNALS & SLOTS EVENT HANDLERS LINKING ---
     connect(m_sidebar, &QListWidget::currentRowChanged, this, &MainWindow::changePage);
-    connect(submitButton, &QPushButton::clicked, this, &MainWindow::handleAddRecord);
+    connect(m_submitButton, &QPushButton::clicked, this, &MainWindow::handleSaveRecord);
+    connect(btnEdit, &QPushButton::clicked, this, &MainWindow::editSelectedRecord);
+    connect(btnDelete, &QPushButton::clicked, this, &MainWindow::deleteSelectedRecord);
+
     connect(btnExpCSV, &QPushButton::clicked, this, &MainWindow::exportAsCSV);
     connect(btnExpJSON, &QPushButton::clicked, this, &MainWindow::exportAsJSON);
     connect(btnExpDB, &QPushButton::clicked, this, &MainWindow::exportAsDB);
@@ -264,7 +267,9 @@ void MainWindow::applyStylesheet()
         "QPushButton { background-color: #4a5568; color: white; border: none; padding: 10px 18px; border-radius: 4px; font-weight: bold; font-size: 13px; }"
         "QPushButton:hover { background-color: #2d3748; }"
         "QPushButton#btn-submit { background-color: #2b6cb0; padding: 12px; }"
-        "QPushButton#btn-submit:hover { background-color: #2c5282; }";
+        "QPushButton#btn-submit:hover { background-color: #2c5282; }"
+        "QPushButton#btn-delete { background-color: #e53e3e; }"
+        "QPushButton#btn-delete:hover { background-color: #c53030; }";
 
     this->setStyleSheet(styles);
 }
@@ -273,31 +278,113 @@ void MainWindow::changePage(int index)
 {
     m_pageContainer->setCurrentIndex(index);
     if(index == 0) {
-        loadRecordsFromDb(); // Instantly sync grid visibility if switched to viewing panel
+        loadRecordsFromDb();
+    } else if (index == 1) {
+        // If user clicks "Add Record" from sidebar, ensure form is clean and in Add Mode
+        resetFormToAddMode();
     }
+}
+
+void MainWindow::resetFormToAddMode()
+{
+    m_currentEditId = -1; // Reset tracker
+    m_formTitle->setText("Register New Schedule Metrics Entry");
+    m_submitButton->setText("Save Entry Record to DB");
+
+    // Reset fields to default
+    m_dateEdit->setDate(QDate::currentDate());
+    m_startTimeEdit->setTime(QTime::currentTime());
+    m_endTimeEdit->setTime(QTime::currentTime().addSecs(3600));
+    m_uploadsSpinBox->setValue(0);
+    m_schedStartEdit->setDate(QDate::currentDate());
+    m_schedEndEdit->setDate(QDate::currentDate().addDays(7));
 }
 
 void MainWindow::loadRecordsFromDb()
 {
-    m_tableWidget->setRowCount(0); // Clean staging viewport
+    m_tableWidget->setRowCount(0);
 
-    QSqlQuery query("SELECT record_date, start_time, end_time, uploads_count, sched_start_date, sched_end_date FROM schedules");
+    // Notice we are now fetching 'id' as well
+    QSqlQuery query("SELECT id, record_date, start_time, end_time, uploads_count, sched_start_date, sched_end_date FROM schedules");
     int row = 0;
 
     while(query.next()) {
         m_tableWidget->insertRow(row);
+
         for(int col = 0; col < 6; ++col) {
-            QTableWidgetItem *item = new QTableWidgetItem(query.value(col).toString());
+            // Visual columns correspond to SQL index col + 1 (since id is at index 0)
+            QTableWidgetItem *item = new QTableWidgetItem(query.value(col + 1).toString());
             item->setTextAlignment(Qt::AlignCenter);
+
+            // On the first visual column, securely stash the Database ID out of sight
+            if(col == 0) {
+                item->setData(Qt::UserRole, query.value(0).toInt());
+            }
+
             m_tableWidget->setItem(row, col, item);
         }
         row++;
     }
 }
 
-void MainWindow::handleAddRecord()
+void MainWindow::deleteSelectedRecord()
 {
-    // Extract formatted strings mirroring exactly requested masks
+    int currentRow = m_tableWidget->currentRow();
+    if (currentRow < 0) {
+        QMessageBox::warning(this, "Selection Required", "Please select a record from the table to delete.");
+        return;
+    }
+
+    // Retrieve the securely stored ID
+    int idToDelete = m_tableWidget->item(currentRow, 0)->data(Qt::UserRole).toInt();
+
+    QMessageBox::StandardButton reply = QMessageBox::question(this, "Confirm Deletion",
+                                                              "Are you sure you want to permanently delete this record?",
+                                                              QMessageBox::Yes | QMessageBox::No);
+
+    if (reply == QMessageBox::Yes) {
+        QSqlQuery query;
+        query.prepare("DELETE FROM schedules WHERE id = :id");
+        query.bindValue(":id", idToDelete);
+
+        if(query.exec()) {
+            loadRecordsFromDb(); // Refresh Grid
+        } else {
+            QMessageBox::critical(this, "Error", "Failed to delete record: " + query.lastError().text());
+        }
+    }
+}
+
+void MainWindow::editSelectedRecord()
+{
+    int currentRow = m_tableWidget->currentRow();
+    if (currentRow < 0) {
+        QMessageBox::warning(this, "Selection Required", "Please select a record from the table to edit.");
+        return;
+    }
+
+    // 1. Get the DB ID
+    m_currentEditId = m_tableWidget->item(currentRow, 0)->data(Qt::UserRole).toInt();
+
+    // 2. Parse existing data back into form inputs
+    m_dateEdit->setDate(QDate::fromString(m_tableWidget->item(currentRow, 0)->text(), "MM/dd/yyyy"));
+    m_startTimeEdit->setTime(QTime::fromString(m_tableWidget->item(currentRow, 1)->text(), "hh:mm AP"));
+    m_endTimeEdit->setTime(QTime::fromString(m_tableWidget->item(currentRow, 2)->text(), "hh:mm AP"));
+    m_uploadsSpinBox->setValue(m_tableWidget->item(currentRow, 3)->text().toInt());
+    m_schedStartEdit->setDate(QDate::fromString(m_tableWidget->item(currentRow, 4)->text(), "MM/dd/yyyy"));
+    m_schedEndEdit->setDate(QDate::fromString(m_tableWidget->item(currentRow, 5)->text(), "MM/dd/yyyy"));
+
+    // 3. Update Form UI to reflect Update Mode
+    m_formTitle->setText("Modify Existing Schedule Entry");
+    m_submitButton->setText("Update Existing Record");
+
+    // 4. Navigate the application to the form page visually
+    m_pageContainer->setCurrentIndex(1);
+    m_sidebar->setCurrentRow(1); // Keep sidebar highlight consistent
+}
+
+void MainWindow::handleSaveRecord()
+{
     QString recDate = m_dateEdit->date().toString("MM/dd/yyyy");
     QString sTime = m_startTimeEdit->time().toString("hh:mm AP");
     QString eTime = m_endTimeEdit->time().toString("hh:mm AP");
@@ -306,8 +393,19 @@ void MainWindow::handleAddRecord()
     QString schEnd = m_schedEndEdit->date().toString("MM/dd/yyyy");
 
     QSqlQuery query;
-    query.prepare("INSERT INTO schedules (record_date, start_time, end_time, uploads_count, sched_start_date, sched_end_date) "
-                  "VALUES (:rd, :st, :et, :uc, :ssd, :sed)");
+
+    // Check our tracker to see if we are INSERTING (New) or UPDATING (Existing)
+    if (m_currentEditId == -1) {
+        query.prepare("INSERT INTO schedules (record_date, start_time, end_time, uploads_count, sched_start_date, sched_end_date) "
+                      "VALUES (:rd, :st, :et, :uc, :ssd, :sed)");
+    } else {
+        query.prepare("UPDATE schedules SET "
+                      "record_date = :rd, start_time = :st, end_time = :et, "
+                      "uploads_count = :uc, sched_start_date = :ssd, sched_end_date = :sed "
+                      "WHERE id = :id");
+        query.bindValue(":id", m_currentEditId);
+    }
+
     query.bindValue(":rd", recDate);
     query.bindValue(":st", sTime);
     query.bindValue(":et", eTime);
@@ -316,11 +414,10 @@ void MainWindow::handleAddRecord()
     query.bindValue(":sed", schEnd);
 
     if(!query.exec()) {
-        QMessageBox::critical(this, "Insertion Failed", "Database commit failure error logs: " + query.lastError().text());
+        QMessageBox::critical(this, "Execution Failed", "Database commit failure error logs: " + query.lastError().text());
     } else {
-        QMessageBox::information(this, "Success", "Record successfully logged inside structural Database.");
-        // Reset inputs fields contextively
-        m_uploadsSpinBox->setValue(0);
+        QMessageBox::information(this, "Success", m_currentEditId == -1 ? "New record successfully logged." : "Existing record successfully updated.");
+        resetFormToAddMode();
         m_sidebar->setCurrentRow(0); // Auto-navigate user to updated data overview panel
     }
 }
@@ -339,7 +436,6 @@ void MainWindow::exportAsCSV()
     }
 
     QTextStream out(&file);
-    // Write Structured Column Headers Line
     out << "Date(mm/dd/yyyy),Start_time(12_Hours hh:mm am or pm),End_time(12_Hours hh:mm am or pm),Number_of_uploades,Schedule_Start_Date(mm/dd/yyyy),Schedule_End_Date(mm/dd/yyyy)\n";
 
     QSqlQuery query("SELECT record_date, start_time, end_time, uploads_count, sched_start_date, sched_end_date FROM schedules");
@@ -393,13 +489,12 @@ void MainWindow::exportAsDB()
     QString destPath = QFileDialog::getSaveFileName(this, "Backup Active SQLite Base Binary Target", "records_backup.db", "Database Source Files (*.db)");
     if(destPath.isEmpty()) return;
 
-    // Must checkpoint temporary connections safely by ensuring cache flushes or simple native copy mechanics
     m_db.close();
 
-    QFile::remove(destPath); // Sweep existing targets to rewrite clean raw copy safely
+    QFile::remove(destPath);
     bool ok = QFile::copy(currentDbPath, destPath);
 
-    if(!m_db.open()) { // Re-establish active binding connection pipeline to running engine execution track
+    if(!m_db.open()) {
         qDebug() << "Re-opening failed post structural backup duplication.";
     }
 
@@ -422,16 +517,15 @@ void MainWindow::importFromCSV()
     }
 
     QTextStream in(&file);
-    QString headerLine = in.readLine(); // Pop and dismiss first schema identification header safely
+    QString headerLine = in.readLine();
 
     QSqlQuery query;
-    m_db.transaction(); // Wrap insertion stack sequences dynamically under accelerated memory pipelines transaction block
+    m_db.transaction();
 
     while(!in.atEnd()) {
         QString line = in.readLine();
         if(line.trimmed().isEmpty()) continue;
 
-        // Basic parser variant checking explicitly for string delimiters removal
         QStringList fields;
         QString currentField;
         bool insideQuotes = false;
@@ -513,7 +607,7 @@ void MainWindow::importFromDB()
     QString targetBackupPath = QFileDialog::getOpenFileName(this, "Select Master Structural Native Db to Restore Framework", "", "Engine Storage Units (*.db)");
     if(targetBackupPath.isEmpty()) return;
 
-    m_db.close(); // Detach structural pipelines engine hooks cleanly
+    m_db.close();
     QString activeDbPath = QCoreApplication::applicationDirPath() + "/database/records.db";
 
     QFile::remove(activeDbPath);

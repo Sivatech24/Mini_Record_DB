@@ -427,6 +427,12 @@ CMakeFiles/Win_App.dir/main.cpp.obj: \
  C:/Qt/6.11.1/mingw_64/include/QtWidgets/QPushButton \
  C:/Qt/6.11.1/mingw_64/include/QtWidgets/qpushbutton.h \
  C:/Qt/6.11.1/mingw_64/include/QtWidgets/qabstractbutton.h \
+ C:/Qt/6.11.1/mingw_64/include/QtWidgets/QLabel \
+ C:/Qt/6.11.1/mingw_64/include/QtWidgets/qlabel.h \
+ C:/Qt/6.11.1/mingw_64/include/QtGui/qpicture.h \
+ C:/Qt/6.11.1/mingw_64/include/QtCore/qiodevice.h \
+ C:/Qt/6.11.1/mingw_64/include/QtGui/qtextdocument.h \
+ C:/Qt/6.11.1/mingw_64/include/QtCore/qurl.h \
  C:/Qt/6.11.1/mingw_64/include/QtWidgets/QApplication \
  C:/Qt/6.11.1/mingw_64/include/QtWidgets/qapplication.h \
  C:/Qt/6.11.1/mingw_64/include/QtCore/qcoreapplication.h \
@@ -444,7 +450,6 @@ CMakeFiles/Win_App.dir/main.cpp.obj: \
  C:/Qt/6.11.1/mingw_64/include/QtCore/qdir.h \
  C:/Qt/6.11.1/mingw_64/include/QtCore/qdirlisting.h \
  C:/Qt/6.11.1/mingw_64/include/QtCore/qfiledevice.h \
- C:/Qt/6.11.1/mingw_64/include/QtCore/qiodevice.h \
  C:/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/filesystem \
  C:/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/fs_fwd.h \
  C:/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/fs_path.h \
